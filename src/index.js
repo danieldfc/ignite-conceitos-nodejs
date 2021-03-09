@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
-// const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -15,7 +15,24 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 app.post('/users', (request, response) => {
-  // Complete aqui
+  const { name, username } = request.body;
+
+  const userAlreadyExist = users.some(user => user.username === username);
+
+  if (userAlreadyExist) {
+    return response.status(400).json({ error: 'User not found' });
+  }
+
+  const user = {
+    id: uuidv4(),
+    name,
+    username,
+    todos: [],
+  }
+
+  users.push(user);
+
+  return response.status(201).json(user);
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
